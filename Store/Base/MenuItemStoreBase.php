@@ -14,6 +14,7 @@ use b8\Database\Query\Criteria;
 use b8\Exception\StoreException;
 use Octo\Store;
 use Octo\Menu\Model\MenuItem;
+use Octo\Menu\Model\MenuItemCollection;
 
 /**
  * MenuItem Base Store
@@ -49,6 +50,13 @@ trait MenuItemStoreBase
         if (is_null($value)) {
             throw new StoreException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
         }
+        // This is the primary key, so try and get from cache:
+        $cacheResult = $this->getFromCache($value);
+
+        if (!empty($cacheResult)) {
+            return $cacheResult;
+        }
+
 
         $query = new Query($this->getNamespace('MenuItem').'\Model\MenuItem', $useConnection);
         $query->select('*')->from('menu_item')->limit(1);
@@ -57,7 +65,11 @@ trait MenuItemStoreBase
 
         try {
             $query->execute();
-            return $query->fetch();
+            $result = $query->fetch();
+
+            $this->setCache($value, $result);
+
+            return $result;
         } catch (PDOException $ex) {
             throw new StoreException('Could not get MenuItem by Id', 0, $ex);
         }
@@ -110,7 +122,7 @@ trait MenuItemStoreBase
 
         try {
             $query->execute();
-            return $query->fetchAll();
+            return new MenuItemCollection($query->fetchAll());
         } catch (PDOException $ex) {
             throw new StoreException('Could not get MenuItem by MenuId', 0, $ex);
         }
@@ -164,7 +176,7 @@ trait MenuItemStoreBase
 
         try {
             $query->execute();
-            return $query->fetchAll();
+            return new MenuItemCollection($query->fetchAll());
         } catch (PDOException $ex) {
             throw new StoreException('Could not get MenuItem by PageId', 0, $ex);
         }

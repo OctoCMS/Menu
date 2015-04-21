@@ -14,6 +14,7 @@ use b8\Database\Query\Criteria;
 use b8\Exception\StoreException;
 use Octo\Store;
 use Octo\Menu\Model\Menu;
+use Octo\Menu\Model\MenuCollection;
 
 /**
  * Menu Base Store
@@ -49,6 +50,13 @@ trait MenuStoreBase
         if (is_null($value)) {
             throw new StoreException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
         }
+        // This is the primary key, so try and get from cache:
+        $cacheResult = $this->getFromCache($value);
+
+        if (!empty($cacheResult)) {
+            return $cacheResult;
+        }
+
 
         $query = new Query($this->getNamespace('Menu').'\Model\Menu', $useConnection);
         $query->select('*')->from('menu')->limit(1);
@@ -57,7 +65,11 @@ trait MenuStoreBase
 
         try {
             $query->execute();
-            return $query->fetch();
+            $result = $query->fetch();
+
+            $this->setCache($value, $result);
+
+            return $result;
         } catch (PDOException $ex) {
             throw new StoreException('Could not get Menu by Id', 0, $ex);
         }
@@ -81,7 +93,11 @@ trait MenuStoreBase
 
         try {
             $query->execute();
-            return $query->fetch();
+            $result = $query->fetch();
+
+            $this->setCache($value, $result);
+
+            return $result;
         } catch (PDOException $ex) {
             throw new StoreException('Could not get Menu by TemplateTag', 0, $ex);
         }

@@ -16,15 +16,16 @@ class TemplateFunctions extends Listener
     }
 
 
-    public function registerFunctions(Template $template)
+    public function registerFunctions(Template $source)
     {
-        $template->addFunction('renderMenu', function ($menuKey) {
+        $source->addFunction('renderMenu', function ($menuKey) use (&$source) {
             $menuStore = new MenuStore();
             $menuItemStore = new MenuItemStore();
 
             $menu = $menuStore->getByTemplateTag($menuKey);
 
             $template = Template::load('Menu', 'Menu');
+            $template->setContext($source->getContext());
 
             if ($menu) {
                 $template->menu = $menuItemStore->getForMenu($menu->getId());

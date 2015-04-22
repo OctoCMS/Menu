@@ -21,12 +21,12 @@ class TemplateFunctions extends Listener
         $template->addFunction('renderMenu', function ($menuKey) use ($template) {
             $menuStore = new MenuStore();
             $menuItemStore = new MenuItemStore();
-
             $menu = $menuStore->getByTemplateTag($menuKey);
 
             $menuTemplate = Template::load('Menu', 'Menu');
 
             $menuItems = [];
+            $menuTemplate->setContext($template->getContext());
 
             if ($menu) {
                 $menuItems = $menuItemStore->getForMenu($menu->getId());

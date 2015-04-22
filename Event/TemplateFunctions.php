@@ -18,27 +18,30 @@ class TemplateFunctions extends Listener
 
     public function registerFunctions(Template $template)
     {
-        $template->addFunction('renderMenu', function ($menuKey) {
+        $template->addFunction('renderMenu', function ($menuKey) use ($template) {
             $menuStore = new MenuStore();
             $menuItemStore = new MenuItemStore();
 
             $menu = $menuStore->getByTemplateTag($menuKey);
 
-            $template = Template::load('Menu', 'Menu');
+            $menuTemplate = Template::load('Menu', 'Menu');
+
+            $menuItems = [];
 
             if ($menu) {
-                $template->menu = $menuItemStore->getForMenu($menu->getId());
+                $menuItems = $menuItemStore->getForMenu($menu->getId());
             }
 
-            if (isset($template->menu) && is_array($template->menu)) {
-                foreach ($template->menu as $item) {
-                    if ($this->page->getUri() == $item->getPage()->getUri()) {
+            if (isset($menuItems) && is_array($menuItems)) {
+                foreach ($menuItems as $item) {
+                    if ($template->page->getUri() == $item->getUrl()) {
                         $item->setCurrent('current');
                     }
                 }
             }
 
-            return $template->render();
+            $menuTemplate->menu = $menuItems;
+            return $menuTemplate->render();
         });
     }
 }

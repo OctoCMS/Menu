@@ -106,7 +106,7 @@ trait MenuItemStoreBase
      * @param array $options Limits, offsets, etc.
      * @param string $useConnection Connection type to use.
      * @throws StoreException
-     * @return MenuItem[]
+     * @return MenuItemCollection
      */
     public function getByMenuId($value, $options = [], $useConnection = 'read')
     {
@@ -160,7 +160,7 @@ trait MenuItemStoreBase
      * @param array $options Limits, offsets, etc.
      * @param string $useConnection Connection type to use.
      * @throws StoreException
-     * @return MenuItem[]
+     * @return MenuItemCollection
      */
     public function getByPageId($value, $options = [], $useConnection = 'read')
     {

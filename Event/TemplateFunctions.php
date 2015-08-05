@@ -34,7 +34,8 @@ class TemplateFunctions extends Listener
 
             if (isset($menuItems) && is_array($menuItems)) {
                 foreach ($menuItems as $item) {
-                    if ($template->page->getUri() == $item->getUrl()) {
+
+                    if ($template->page && $template->page->getUri() == $item->getUrl()) {
                         $item->setCurrent('current');
                     }
                 }

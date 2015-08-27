@@ -46,6 +46,11 @@ class MenuInstallMigration extends AbstractMigration
         }
 
         $table->save();
+
+        $table->changeColumn('name', 'string', ['limit' => 250, 'null' => false]);
+        $table->changeColumn('template_tag', 'string', ['limit' => 250, 'null' => false]);
+
+        $table->save();
     }
 
     protected function createMenuItem()
@@ -76,6 +81,12 @@ class MenuInstallMigration extends AbstractMigration
         if (!$table->hasColumn('position')) {
             $table->addColumn('position', 'integer', ['null' => false, 'default' => 0]);
         }
+
+        $table->save();
+
+        $table->changeColumn('title', 'string', ['limit' => 250, 'null' => true, 'default' => null]);
+        $table->changeColumn('url', 'string', ['limit' => 250, 'null' => true, 'default' => null]);
+        $table->changeColumn('position', 'integer', ['null' => false, 'default' => 0]);
 
         $table->save();
     }

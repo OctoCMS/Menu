@@ -91,7 +91,7 @@
             $('.pace').removeClass('hide');
 
             var id = $(this).parents('tr').data('id');
-            $.post('/'+window.adminUri+'/menu/items/{@menu.id}', {item: {id: id, title: $(this).val()}}, function () {
+            $.post(window.adminUri + '/menu/items/{@menu.id}', {item: {id: id, title: $(this).val()}}, function () {
                 $('.pace').addClass('hide');
             });
 
@@ -103,7 +103,7 @@
 
             var id = $(this).parents('tr').data('id');
             $(this).parents('tr').remove();
-            $.post('/'+window.adminUri+'/menu/items/{@menu.id}', {delete: id}, function () {
+            $.post(window.adminUri + '/menu/items/{@menu.id}', {delete: id}, function () {
                 $('.pace').addClass('hide');
             });
 
@@ -137,7 +137,7 @@
             placeholder: "Search for a page",
             minimumInputLength: 1,
             ajax: {
-                url: '/'+window.adminUri+'/page/autocomplete',
+                url: window.adminUri + '/page/autocomplete',
                 dataType: 'json',
                 data: function(term) {
                     return {
@@ -179,7 +179,7 @@
                 item.url = $('#new-link').val();
             }
 
-            $.post('/'+window.adminUri+'/menu/items/{@menu.id}', {item: item}, function (data) {
+            $.post(window.adminUri + '/menu/items/{@menu.id}', {item: item}, function (data) {
                 $('.pace').addClass('hide');
 
                 data = JSON.parse(data);
@@ -212,7 +212,7 @@
     {
         $('.pace').removeClass('hide');
 
-        $.post('/' + window.adminUri + '/menu/items/{@menu.id}', {positions: items}, function () {
+        $.post(window.adminUri + '/menu/items/{@menu.id}', {positions: items}, function () {
             $('.pace').addClass('hide');
         });
     }

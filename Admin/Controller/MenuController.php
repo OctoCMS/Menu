@@ -70,7 +70,7 @@ class MenuController extends Controller
                 $menu->setValues($this->getParams());
                 $menu = $this->menuStore->saveByInsert($menu);
                 $this->successMessage($menu->getName() . ' was added successfully.', true);
-                header('Location: /' . $this->config->get('site.admin_uri') . '/menu/edit/' . $menu->getId());
+                $this->redirect('/menu/edit/' . $menu->getId());
             }
         }
 
@@ -91,7 +91,7 @@ class MenuController extends Controller
                 $menu->setValues($this->getParams());
                 $menu = $this->menuStore->save($menu);
                 $this->successMessage($menu->getName() . ' was edited successfully.', true);
-                header('Location: /' . $this->config->get('site.admin_uri') . '/menu');
+                $this->redirect('/menu');
             }
         }
 
@@ -105,9 +105,7 @@ class MenuController extends Controller
         $menu = $this->menuStore->getById($menuId);
         $this->menuStore->delete($menu);
         $this->successMessage($menu->getName() . ' has been deleted.', true);
-
-        $this->response = new RedirectResponse();
-        $this->response->setHeader('Location', '/' . $this->config->get('site.admin_uri') . '/menu');
+        $this->redirect('/menu');
     }
 
     protected function menuForm($values = [], $type = 'add')
@@ -116,9 +114,9 @@ class MenuController extends Controller
         $form->setMethod('POST');
 
         if ($type == 'add') {
-            $form->setAction('/' . $this->config->get('site.admin_uri') . '/menu/add');
+            $form->setAction($this->config->get('site.full_admin_url') . '/menu/add');
         } else {
-            $form->setAction('/' . $this->config->get('site.admin_uri') . '/menu/edit/' . $values['id']);
+            $form->setAction($this->config->get('site.full_admin_url') . '/menu/edit/' . $values['id']);
         }
 
         $form->setClass('smart-form');

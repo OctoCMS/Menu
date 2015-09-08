@@ -90,11 +90,13 @@ trait MenuBase
     /**
     * Set the value of Name / name.
     *
+    * Must not be null.
     * @param $value string
     */
     public function setName($value)
     {
         $this->validateString('Name', $value);
+        $this->validateNotNull('Name', $value);
 
         if ($this->data['name'] === $value) {
             return;
@@ -107,11 +109,13 @@ trait MenuBase
     /**
     * Set the value of TemplateTag / template_tag.
     *
+    * Must not be null.
     * @param $value string
     */
     public function setTemplateTag($value)
     {
         $this->validateString('TemplateTag', $value);
+        $this->validateNotNull('TemplateTag', $value);
 
         if ($this->data['template_tag'] === $value) {
             return;

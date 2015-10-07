@@ -4,29 +4,32 @@ namespace Octo\Menu\Event;
 
 use Octo\Event\Listener;
 use Octo\Event\Manager;
-use Octo\Html\Template;
+use Octo\Pages\Model\Page;
+use Octo\Template;
 use Octo\Menu\Store\MenuItemStore;
 use Octo\Menu\Store\MenuStore;
 
 class TemplateFunctions extends Listener
 {
+    protected $page;
+
     public function registerListeners(Manager $manager)
     {
-        $manager->registerListener('PublicTemplateLoaded', array($this, 'registerFunctions'));
+        $manager->registerListener('TemplateInit', array($this, 'registerFunctions'));
+        $manager->registerListener('PageLoaded', function (Page $page) {
+            $this->page = $page;
+        });
     }
 
-
-    public function registerFunctions(Template $template)
+    public function registerFunctions(array &$functions)
     {
-        $template->addFunction('renderMenu', function ($menuKey) use ($template) {
+        $functions['renderMenu'] = function ($menuKey) {
             $menuStore = new MenuStore();
             $menuItemStore = new MenuItemStore();
             $menu = $menuStore->getByTemplateTag($menuKey);
 
-            $menuTemplate = Template::load('Menu', 'Menu');
-
+            $menuTemplate = new Template('Menu/Menu');
             $menuItems = [];
-            $menuTemplate->setContext($template->getContext());
 
             if ($menu) {
                 $menuItems = $menuItemStore->getForMenu($menu->getId());
@@ -35,7 +38,7 @@ class TemplateFunctions extends Listener
             if (isset($menuItems) && is_array($menuItems)) {
                 foreach ($menuItems as $item) {
 
-                    if ($template->page && $template->page->getUri() == $item->getUrl()) {
+                    if (isset($this->page)  && $this->page->getUri() == $item->getUrl()) {
                         $item->setCurrent('current');
                     }
                 }
@@ -43,6 +46,6 @@ class TemplateFunctions extends Listener
 
             $menuTemplate->menu = $menuItems;
             return $menuTemplate->render();
-        });
+        };
     }
 }

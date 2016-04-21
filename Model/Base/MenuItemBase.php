@@ -139,6 +139,7 @@ trait MenuItemBase
     /**
     * Set the value of MenuId / menu_id.
     *
+    * Must not be null.
     * @param $value int
     */
     public function setMenuId($value)
@@ -150,6 +151,7 @@ trait MenuItemBase
             $value = null;
         }
 
+        $this->validateNotNull('MenuId', $value);
 
         if ($this->data['menu_id'] === $value) {
             return;

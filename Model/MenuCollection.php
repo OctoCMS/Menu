@@ -20,7 +20,7 @@ class MenuCollection extends Collection
      * @param Menu $value
      * @return MenuCollection
      */
-    public function add($key, Menu $value)
+    public function addMenu($key, Menu $value)
     {
         return parent::add($key, $value);
     }

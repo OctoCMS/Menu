@@ -55,7 +55,7 @@
                             <fieldset>
                                 <div class="form-group">
                                     <label class="">Page</label>
-                                        <input id="new-page" name="page" type="text" class="form-control">
+                                        <select id="new-page" name="page" class="form-control"></select>
                                 </div>
 
                                 <div class="form-group">
@@ -136,12 +136,14 @@
         $('#new-page').select2({
             placeholder: "Search for a page",
             minimumInputLength: 1,
+            allowClear: true,
+            width: '100%',
             ajax: {
                 url: window.adminUri + '/page/autocomplete',
                 dataType: 'json',
                 data: function(term) {
                     return {
-                        q: term
+                        q: term.term
                     };
                 },
                 results: function(data) {

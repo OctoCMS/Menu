@@ -37,13 +37,13 @@ class TemplateFunctions extends Listener
 
             if (isset($menuItems) && is_array($menuItems)) {
                 foreach ($menuItems as $item) {
-
-                    if (isset($this->page)  && $this->page->getUri() == $item->getUrl()) {
+                    if (isset($this->page) && $this->page->getUri() == $item->getUrl()) {
                         $item->setCurrent('current');
                     }
                 }
             }
 
+            $menuTemplate->key = $menuKey;
             $menuTemplate->menu = $menuItems;
             return $menuTemplate->render();
         };

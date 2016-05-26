@@ -1,7 +1,7 @@
 {% if menu %}
-<ul>
+<ul id="{{ key }}" class="{{ key }}">
     {% for item in menu %}
-    <li>
+    <li class="{{ item.current ? "active" : "" }}">
         <a href="{{ item.url }}">{{ item.title }}</a>
     </li>
     {% endfor %}

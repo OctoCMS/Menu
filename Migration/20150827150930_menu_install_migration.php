@@ -29,7 +29,7 @@ class MenuInstallMigration extends AbstractMigration
         $table = $this->table('menu', ['id' => false, 'primary_key' => ['id']]);
 
         if (!$this->hasTable('menu')) {
-            $table->addColumn('id', 'integer', ['signed' => false, 'null' => false]);
+            $table->addColumn('id', 'integer', ['signed' => false, 'null' => false, 'identity' => true]);
             $table->create();
         }
 
@@ -58,7 +58,7 @@ class MenuInstallMigration extends AbstractMigration
         $table = $this->table('menu_item', ['id' => false, 'primary_key' => ['id']]);
 
         if (!$this->hasTable('menu_item')) {
-            $table->addColumn('id', 'integer', ['signed' => false, 'null' => false]);
+            $table->addColumn('id', 'integer', ['signed' => false, 'null' => false, 'identity' => true]);
             $table->create();
         }
 

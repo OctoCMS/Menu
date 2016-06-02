@@ -55,7 +55,7 @@
                             <fieldset>
                                 <div class="form-group">
                                     <label class="">Page</label>
-                                        <select id="new-page" name="page" class="form-control"></select>
+                                        <select id="new-page" name="page" class="octo-page-picker form-control"></select>
                                 </div>
 
                                 <div class="form-group">
@@ -133,24 +133,7 @@
 
         registerEvents();
 
-        $('#new-page').select2({
-            placeholder: "Search for a page",
-            minimumInputLength: 1,
-            allowClear: true,
-            width: '100%',
-            ajax: {
-                url: window.adminUri + '/page/autocomplete',
-                dataType: 'json',
-                data: function(term) {
-                    return {
-                        q: term.term
-                    };
-                },
-                results: function(data) {
-                    return data;
-                }
-            }
-        }).on('change', function() {
+        $('#new-page').on('change', function() {
             if ($('#new-title').val() == '') {
                 $('#new-title').val($(this).select2('data').text);
             }

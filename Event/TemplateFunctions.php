@@ -5,6 +5,7 @@ namespace Octo\Menu\Event;
 use Octo\Event\Listener;
 use Octo\Event\Manager;
 use Octo\Pages\Model\Page;
+use Octo\Store;
 use Octo\Template;
 use Octo\Menu\Store\MenuItemStore;
 use Octo\Menu\Store\MenuStore;
@@ -24,8 +25,8 @@ class TemplateFunctions extends Listener
     public function registerFunctions(array &$functions)
     {
         $functions['renderMenu'] = function ($menuKey) {
-            $menuStore = new MenuStore();
-            $menuItemStore = new MenuItemStore();
+            $menuStore = Store::get('Menu');
+            $menuItemStore = Store::get('MenuItem');
             $menu = $menuStore->getByTemplateTag($menuKey);
 
             $menuTemplate = new Template('Menu/Menu');

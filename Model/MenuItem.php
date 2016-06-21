@@ -12,11 +12,9 @@ use Octo;
  * MenuItem Model
  * @uses Octo\Menu\Model\Base\MenuBaseItemBase
  */
-class MenuItem extends Octo\Model
+class MenuItem extends Base\MenuItemBase
 {
-    use Base\MenuItemBase;
-
-    public function __construct($initialData = array())
+	public function __construct($initialData = array())
     {
         parent::__construct($initialData);
 

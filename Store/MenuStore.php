@@ -14,11 +14,9 @@ use Octo\Menu\Model\Menu;
  * Menu Store
  * @uses Octo\Menu\Store\Base\MenuStoreBase
  */
-class MenuStore extends Octo\Store
+class MenuStore extends Base\MenuStoreBase
 {
-    use Base\MenuStoreBase;
-
-    public function getAll($order = 'name ASC')
+	public function getAll($order = 'name ASC')
     {
         $query = 'SELECT * FROM menu ORDER BY ' . $order;
         $stmt = Database::getConnection('read')->prepare($query);

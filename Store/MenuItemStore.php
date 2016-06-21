@@ -14,11 +14,9 @@ use Octo\Menu\Model\MenuItem;
  * MenuItem Store
  * @uses Octo\Menu\Store\Base\MenuItemStoreBase
  */
-class MenuItemStore extends Octo\Store
+class MenuItemStore extends Base\MenuItemStoreBase
 {
-    use Base\MenuItemStoreBase;
-
-    public function getForMenu($menuId)
+	public function getForMenu($menuId)
     {
         $query = 'SELECT * FROM `menu_item` WHERE `menu_id` = :menu_id ORDER BY `position` ASC';
         $stmt = Database::getConnection('read')->prepare($query);

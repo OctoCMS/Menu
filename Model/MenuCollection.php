@@ -6,8 +6,7 @@
 
 namespace Octo\Menu\Model;
 
-use Octo;
-use b8\Model\Collection;
+use Block8\Database\Model\Collection;
 
 /**
  * Menu Model Collection

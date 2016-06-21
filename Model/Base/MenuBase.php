@@ -6,77 +6,82 @@
 
 namespace Octo\Menu\Model\Base;
 
-use b8\Store\Factory;
+use Octo\Model;
+use Octo\Store;
 
 /**
  * Menu Base Model
  */
-trait MenuBase
+class MenuBase extends Model
 {
     protected function init()
     {
-        $this->tableName = 'menu';
-        $this->modelName = 'Menu';
+        $this->table = 'menu';
+        $this->model = 'Menu';
 
         // Columns:
+        
         $this->data['id'] = null;
         $this->getters['id'] = 'getId';
         $this->setters['id'] = 'setId';
+        
         $this->data['name'] = null;
         $this->getters['name'] = 'getName';
         $this->setters['name'] = 'setName';
+        
         $this->data['template_tag'] = null;
         $this->getters['template_tag'] = 'getTemplateTag';
         $this->setters['template_tag'] = 'setTemplateTag';
-
+        
         // Foreign keys:
+        
     }
+
+    
     /**
-    * Get the value of Id / id.
-    *
-    * @return int
-    */
-    public function getId()
-    {
+     * Get the value of Id / id
+     * @return int
+     */
+
+     public function getId()
+     {
         $rtn = $this->data['id'];
 
         return $rtn;
-    }
-
+     }
+    
     /**
-    * Get the value of Name / name.
-    *
-    * @return string
-    */
-    public function getName()
-    {
+     * Get the value of Name / name
+     * @return string
+     */
+
+     public function getName()
+     {
         $rtn = $this->data['name'];
 
         return $rtn;
-    }
-
+     }
+    
     /**
-    * Get the value of TemplateTag / template_tag.
-    *
-    * @return string
-    */
-    public function getTemplateTag()
-    {
+     * Get the value of TemplateTag / template_tag
+     * @return string
+     */
+
+     public function getTemplateTag()
+     {
         $rtn = $this->data['template_tag'];
 
         return $rtn;
-    }
-
-
+     }
+    
+    
     /**
-    * Set the value of Id / id.
-    *
-    * Must not be null.
-    * @param $value int
-    */
-    public function setId($value)
+     * Set the value of Id / id
+     * @param $value int
+     */
+    public function setId(int $value)
     {
-        $this->validateInt('Id', $value);
+
         $this->validateNotNull('Id', $value);
 
         if ($this->data['id'] === $value) {
@@ -86,16 +91,14 @@ trait MenuBase
         $this->data['id'] = $value;
         $this->setModified('id');
     }
-
+    
     /**
-    * Set the value of Name / name.
-    *
-    * Must not be null.
-    * @param $value string
-    */
-    public function setName($value)
+     * Set the value of Name / name
+     * @param $value string
+     */
+    public function setName(string $value)
     {
-        $this->validateString('Name', $value);
+
         $this->validateNotNull('Name', $value);
 
         if ($this->data['name'] === $value) {
@@ -105,16 +108,14 @@ trait MenuBase
         $this->data['name'] = $value;
         $this->setModified('name');
     }
-
+    
     /**
-    * Set the value of TemplateTag / template_tag.
-    *
-    * Must not be null.
-    * @param $value string
-    */
-    public function setTemplateTag($value)
+     * Set the value of TemplateTag / template_tag
+     * @param $value string
+     */
+    public function setTemplateTag(string $value)
     {
-        $this->validateString('TemplateTag', $value);
+
         $this->validateNotNull('TemplateTag', $value);
 
         if ($this->data['template_tag'] === $value) {
@@ -123,5 +124,11 @@ trait MenuBase
 
         $this->data['template_tag'] = $value;
         $this->setModified('template_tag');
+    }
+    
+    
+    public function MenuItems()
+    {
+        return Store::get('MenuItem')->where('menu_id', $this->data['id']);
     }
 }

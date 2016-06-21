@@ -10,7 +10,6 @@ use Octo;
 /**
  * Menu Model
  */
-class Menu extends Octo\Model
+class Menu extends Base\MenuBase
 {
-    use Base\MenuBase;
-}
+	}

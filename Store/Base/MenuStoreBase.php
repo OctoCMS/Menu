@@ -2,16 +2,11 @@
 
 /**
  * Menu base store for table: menu
+
  */
 
 namespace Octo\Menu\Store\Base;
 
-use PDOException;
-use b8\Cache;
-use b8\Database;
-use b8\Database\Query;
-use b8\Database\Query\Criteria;
-use b8\Exception\StoreException;
 use Octo\Store;
 use Octo\Menu\Model\Menu;
 use Octo\Menu\Model\MenuCollection;
@@ -19,87 +14,49 @@ use Octo\Menu\Model\MenuCollection;
 /**
  * Menu Base Store
  */
-trait MenuStoreBase
+class MenuStoreBase extends Store
 {
-    protected function init()
-    {
-        $this->tableName = 'menu';
-        $this->modelName = '\Octo\Menu\Model\Menu';
-        $this->primaryKey = 'id';
-    }
+    protected $table = 'menu';
+    protected $model = 'Octo\Menu\Model\Menu';
+    protected $key = 'id';
+
     /**
     * @param $value
-    * @param string $useConnection Connection type to use.
-    * @throws StoreException
-    * @return Menu
+    * @return Menu|null
     */
-    public function getByPrimaryKey($value, $useConnection = 'read')
+    public function getByPrimaryKey($value)
     {
-        return $this->getById($value, $useConnection);
+        return $this->getById($value);
     }
 
 
     /**
-    * @param $value
-    * @param string $useConnection Connection type to use.
-    * @throws StoreException
-    * @return Menu
-    */
-    public function getById($value, $useConnection = 'read')
+     * Get a Menu object by Id.
+     * @param $value
+     * @return Menu|null
+     */
+    public function getById(int $value)
     {
-        if (is_null($value)) {
-            throw new StoreException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
-        }
         // This is the primary key, so try and get from cache:
-        $cacheResult = $this->getFromCache($value);
+        $cacheResult = $this->cacheGet($value);
 
         if (!empty($cacheResult)) {
             return $cacheResult;
         }
 
+        $rtn = $this->where('id', $value)->first();
+        $this->cacheSet($value, $rtn);
 
-        $query = new Query($this->getNamespace('Menu').'\Model\Menu', $useConnection);
-        $query->select('*')->from('menu')->limit(1);
-        $query->where('`id` = :id');
-        $query->bind(':id', $value);
-
-        try {
-            $query->execute();
-            $result = $query->fetch();
-
-            $this->setCache($value, $result);
-
-            return $result;
-        } catch (PDOException $ex) {
-            throw new StoreException('Could not get Menu by Id', 0, $ex);
-        }
+        return $rtn;
     }
+
     /**
-    * @param $value
-    * @param string $useConnection Connection type to use.
-    * @throws StoreException
-    * @return Menu
-    */
-    public function getByTemplateTag($value, $useConnection = 'read')
+     * Get a Menu object by TemplateTag.
+     * @param $value
+     * @return Menu|null
+     */
+    public function getByTemplateTag(string $value)
     {
-        if (is_null($value)) {
-            throw new StoreException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
-        }
-
-        $query = new Query($this->getNamespace('Menu').'\Model\Menu', $useConnection);
-        $query->select('*')->from('menu')->limit(1);
-        $query->where('`template_tag` = :template_tag');
-        $query->bind(':template_tag', $value);
-
-        try {
-            $query->execute();
-            $result = $query->fetch();
-
-            $this->setCache($value, $result);
-
-            return $result;
-        } catch (PDOException $ex) {
-            throw new StoreException('Could not get Menu by TemplateTag', 0, $ex);
-        }
+        return $this->where('template_tag', $value)->first();
     }
 }

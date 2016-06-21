@@ -2,16 +2,11 @@
 
 /**
  * MenuItem base store for table: menu_item
+
  */
 
 namespace Octo\Menu\Store\Base;
 
-use PDOException;
-use b8\Cache;
-use b8\Database;
-use b8\Database\Query;
-use b8\Database\Query\Criteria;
-use b8\Exception\StoreException;
 use Octo\Store;
 use Octo\Menu\Model\MenuItem;
 use Octo\Menu\Model\MenuItemCollection;
@@ -19,167 +14,75 @@ use Octo\Menu\Model\MenuItemCollection;
 /**
  * MenuItem Base Store
  */
-trait MenuItemStoreBase
+class MenuItemStoreBase extends Store
 {
-    protected function init()
-    {
-        $this->tableName = 'menu_item';
-        $this->modelName = '\Octo\Menu\Model\MenuItem';
-        $this->primaryKey = 'id';
-    }
+    protected $table = 'menu_item';
+    protected $model = 'Octo\Menu\Model\MenuItem';
+    protected $key = 'id';
+
     /**
     * @param $value
-    * @param string $useConnection Connection type to use.
-    * @throws StoreException
-    * @return MenuItem
+    * @return MenuItem|null
     */
-    public function getByPrimaryKey($value, $useConnection = 'read')
+    public function getByPrimaryKey($value)
     {
-        return $this->getById($value, $useConnection);
+        return $this->getById($value);
     }
 
 
     /**
-    * @param $value
-    * @param string $useConnection Connection type to use.
-    * @throws StoreException
-    * @return MenuItem
-    */
-    public function getById($value, $useConnection = 'read')
+     * Get a MenuItem object by Id.
+     * @param $value
+     * @return MenuItem|null
+     */
+    public function getById(int $value)
     {
-        if (is_null($value)) {
-            throw new StoreException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
-        }
         // This is the primary key, so try and get from cache:
-        $cacheResult = $this->getFromCache($value);
+        $cacheResult = $this->cacheGet($value);
 
         if (!empty($cacheResult)) {
             return $cacheResult;
         }
 
+        $rtn = $this->where('id', $value)->first();
+        $this->cacheSet($value, $rtn);
 
-        $query = new Query($this->getNamespace('MenuItem').'\Model\MenuItem', $useConnection);
-        $query->select('*')->from('menu_item')->limit(1);
-        $query->where('`id` = :id');
-        $query->bind(':id', $value);
-
-        try {
-            $query->execute();
-            $result = $query->fetch();
-
-            $this->setCache($value, $result);
-
-            return $result;
-        } catch (PDOException $ex) {
-            throw new StoreException('Could not get MenuItem by Id', 0, $ex);
-        }
+        return $rtn;
     }
 
     /**
-     * @param $value
-     * @param array $options Offsets, limits, etc.
-     * @param string $useConnection Connection type to use.
-     * @throws StoreException
+     * Get all MenuItem objects by MenuId.
+     * @return \Octo\Menu\Model\MenuItemCollection
+     */
+    public function getByMenuId($value, $limit = null)
+    {
+        return $this->where('menu_id', $value)->get($limit);
+    }
+
+    /**
+     * Gets the total number of MenuItem by MenuId value.
      * @return int
      */
-    public function getTotalForMenuId($value, $options = [], $useConnection = 'read')
+    public function getTotalByMenuId($value) : int
     {
-        if (is_null($value)) {
-            throw new StoreException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
-        }
-
-        $query = new Query($this->getNamespace('MenuItem').'\Model\MenuItem', $useConnection);
-        $query->from('menu_item')->where('`menu_id` = :menu_id');
-        $query->bind(':menu_id', $value);
-
-        $this->handleQueryOptions($query, $options);
-
-        try {
-            return $query->getCount();
-        } catch (PDOException $ex) {
-            throw new StoreException('Could not get count of MenuItem by MenuId', 0, $ex);
-        }
+        return $this->where('menu_id', $value)->count();
     }
 
     /**
-     * @param $value
-     * @param array $options Limits, offsets, etc.
-     * @param string $useConnection Connection type to use.
-     * @throws StoreException
-     * @return MenuItemCollection
+     * Get all MenuItem objects by PageId.
+     * @return \Octo\Menu\Model\MenuItemCollection
      */
-    public function getByMenuId($value, $options = [], $useConnection = 'read')
+    public function getByPageId($value, $limit = null)
     {
-        if (is_null($value)) {
-            throw new StoreException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
-        }
-
-        $query = new Query($this->getNamespace('MenuItem').'\Model\MenuItem', $useConnection);
-        $query->from('menu_item')->where('`menu_id` = :menu_id');
-        $query->bind(':menu_id', $value);
-
-        $this->handleQueryOptions($query, $options);
-
-        try {
-            $query->execute();
-            return new MenuItemCollection($query->fetchAll());
-        } catch (PDOException $ex) {
-            throw new StoreException('Could not get MenuItem by MenuId', 0, $ex);
-        }
-
+        return $this->where('page_id', $value)->get($limit);
     }
 
     /**
-     * @param $value
-     * @param array $options Offsets, limits, etc.
-     * @param string $useConnection Connection type to use.
-     * @throws StoreException
+     * Gets the total number of MenuItem by PageId value.
      * @return int
      */
-    public function getTotalForPageId($value, $options = [], $useConnection = 'read')
+    public function getTotalByPageId($value) : int
     {
-        if (is_null($value)) {
-            throw new StoreException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
-        }
-
-        $query = new Query($this->getNamespace('MenuItem').'\Model\MenuItem', $useConnection);
-        $query->from('menu_item')->where('`page_id` = :page_id');
-        $query->bind(':page_id', $value);
-
-        $this->handleQueryOptions($query, $options);
-
-        try {
-            return $query->getCount();
-        } catch (PDOException $ex) {
-            throw new StoreException('Could not get count of MenuItem by PageId', 0, $ex);
-        }
-    }
-
-    /**
-     * @param $value
-     * @param array $options Limits, offsets, etc.
-     * @param string $useConnection Connection type to use.
-     * @throws StoreException
-     * @return MenuItemCollection
-     */
-    public function getByPageId($value, $options = [], $useConnection = 'read')
-    {
-        if (is_null($value)) {
-            throw new StoreException('Value passed to ' . __FUNCTION__ . ' cannot be null.');
-        }
-
-        $query = new Query($this->getNamespace('MenuItem').'\Model\MenuItem', $useConnection);
-        $query->from('menu_item')->where('`page_id` = :page_id');
-        $query->bind(':page_id', $value);
-
-        $this->handleQueryOptions($query, $options);
-
-        try {
-            $query->execute();
-            return new MenuItemCollection($query->fetchAll());
-        } catch (PDOException $ex) {
-            throw new StoreException('Could not get MenuItem by PageId', 0, $ex);
-        }
-
+        return $this->where('page_id', $value)->count();
     }
 }

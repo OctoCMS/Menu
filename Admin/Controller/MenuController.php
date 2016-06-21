@@ -68,7 +68,7 @@ class MenuController extends Controller
             if ($form->validate()) {
                 $menu = new Menu();
                 $menu->setValues($this->getParams());
-                $menu = $this->menuStore->saveByInsert($menu);
+                $menu = $this->menuStore->insert($menu);
                 $this->successMessage($menu->getName() . ' was added successfully.', true);
                 $this->redirect('/menu/edit/' . $menu->getId());
             }
@@ -96,7 +96,7 @@ class MenuController extends Controller
         }
 
         $this->view->menu = $menu;
-        $values = array_merge(['id' => $menuId], $menu->getDataArray());
+        $values = array_merge(['id' => $menuId], $menu->toArray());
         $this->view->menuForm = $this->menuForm($values, 'edit');
     }
 

@@ -2,7 +2,6 @@
 namespace Octo\Menu\Admin\Controller;
 
 use b8\Form;
-use b8\Http\Response\RedirectResponse;
 use Octo\Admin\Controller;
 use Octo\Admin\Form as FormElement;
 use Octo\Admin\Menu as AdminMenu;
@@ -69,8 +68,7 @@ class MenuController extends Controller
                 $menu = new Menu();
                 $menu->setValues($this->getParams());
                 $menu = $this->menuStore->insert($menu);
-                $this->successMessage($menu->getName() . ' was added successfully.', true);
-                $this->redirect('/menu/edit/' . $menu->getId());
+                return $this->redirect('/menu/edit/' . $menu->getId())->success($menu->getName() . ' was added successfully.');
             }
         }
 
@@ -90,8 +88,7 @@ class MenuController extends Controller
             if ($form->validate()) {
                 $menu->setValues($this->getParams());
                 $menu = $this->menuStore->save($menu);
-                $this->successMessage($menu->getName() . ' was edited successfully.', true);
-                $this->redirect('/menu');
+                return $this->redirect('/menu')->success($menu->getName() . ' saved successfully.');
             }
         }
 
@@ -104,8 +101,7 @@ class MenuController extends Controller
     {
         $menu = $this->menuStore->getById($menuId);
         $this->menuStore->delete($menu);
-        $this->successMessage($menu->getName() . ' has been deleted.', true);
-        $this->redirect('/menu');
+        return $this->redirect('/menu')->success($menu->getName() . ' has been deleted.');
     }
 
     protected function menuForm($values = [], $type = 'add')
@@ -187,7 +183,7 @@ class MenuController extends Controller
             $item->setValues($data);
 
             $item = $this->menuItemStore->save($item);
-            die(json_encode($item->toArray(2)));
+            return $this->json($item->toArray(2));
         }
 
         // Are we deleting an item?
@@ -201,6 +197,6 @@ class MenuController extends Controller
             }
         }
 
-        die('OK');
+        return $this->raw('OK');
     }
 }

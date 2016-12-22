@@ -6,13 +6,16 @@
 
 namespace Octo\Menu\Model\Base;
 
+use DateTime;
+use Block8\Database\Query;
 use Octo\Model;
 use Octo\Store;
+use Octo\Menu\Model\MenuItem;
 
 /**
  * MenuItem Base Model
  */
-class MenuItemBase extends Model
+abstract class MenuItemBase extends Model
 {
     protected function init()
     {
@@ -47,11 +50,11 @@ class MenuItemBase extends Model
         
         // Foreign keys:
         
-        $this->getters['Menu'] = 'getMenu';
-        $this->setters['Menu'] = 'setMenu';
-        
         $this->getters['Page'] = 'getPage';
         $this->setters['Page'] = 'setPage';
+        
+        $this->getters['Menu'] = 'getMenu';
+        $this->setters['Menu'] = 'setMenu';
         
     }
 
@@ -61,7 +64,7 @@ class MenuItemBase extends Model
      * @return int
      */
 
-     public function getId()
+     public function getId() : int
      {
         $rtn = $this->data['id'];
 
@@ -73,7 +76,7 @@ class MenuItemBase extends Model
      * @return int
      */
 
-     public function getMenuId()
+     public function getMenuId() : int
      {
         $rtn = $this->data['menu_id'];
 
@@ -85,7 +88,7 @@ class MenuItemBase extends Model
      * @return string
      */
 
-     public function getTitle()
+     public function getTitle() : ?string
      {
         $rtn = $this->data['title'];
 
@@ -97,7 +100,7 @@ class MenuItemBase extends Model
      * @return string
      */
 
-     public function getPageId()
+     public function getPageId() : ?string
      {
         $rtn = $this->data['page_id'];
 
@@ -109,7 +112,7 @@ class MenuItemBase extends Model
      * @return string
      */
 
-     public function getUrl()
+     public function getUrl() : ?string
      {
         $rtn = $this->data['url'];
 
@@ -121,7 +124,7 @@ class MenuItemBase extends Model
      * @return int
      */
 
-     public function getPosition()
+     public function getPosition() : int
      {
         $rtn = $this->data['position'];
 
@@ -132,67 +135,64 @@ class MenuItemBase extends Model
     /**
      * Set the value of Id / id
      * @param $value int
+     * @return MenuItem
      */
-    public function setId(int $value)
+    public function setId(int $value) : MenuItem
     {
 
-        $this->validateNotNull('Id', $value);
-
-        if ($this->data['id'] === $value) {
-            return;
+        if ($this->data['id'] !== $value) {
+            $this->data['id'] = $value;
+            $this->setModified('id');
         }
 
-        $this->data['id'] = $value;
-        $this->setModified('id');
+        return $this;
     }
     
     /**
      * Set the value of MenuId / menu_id
      * @param $value int
+     * @return MenuItem
      */
-    public function setMenuId(int $value)
+    public function setMenuId(int $value) : MenuItem
     {
-
 
         // As this column is a foreign key, empty values should be considered null.
         if (empty($value)) {
             $value = null;
         }
 
-        $this->validateNotNull('MenuId', $value);
 
-        if ($this->data['menu_id'] === $value) {
-            return;
+        if ($this->data['menu_id'] !== $value) {
+            $this->data['menu_id'] = $value;
+            $this->setModified('menu_id');
         }
 
-        $this->data['menu_id'] = $value;
-        $this->setModified('menu_id');
+        return $this;
     }
     
     /**
      * Set the value of Title / title
      * @param $value string
+     * @return MenuItem
      */
-    public function setTitle($value)
+    public function setTitle(?string $value) : MenuItem
     {
 
-
-
-        if ($this->data['title'] === $value) {
-            return;
+        if ($this->data['title'] !== $value) {
+            $this->data['title'] = $value;
+            $this->setModified('title');
         }
 
-        $this->data['title'] = $value;
-        $this->setModified('title');
+        return $this;
     }
     
     /**
      * Set the value of PageId / page_id
      * @param $value string
+     * @return MenuItem
      */
-    public function setPageId($value)
+    public function setPageId(?string $value) : MenuItem
     {
-
 
         // As this column is a foreign key, empty values should be considered null.
         if (empty($value)) {
@@ -200,50 +200,101 @@ class MenuItemBase extends Model
         }
 
 
-
-        if ($this->data['page_id'] === $value) {
-            return;
+        if ($this->data['page_id'] !== $value) {
+            $this->data['page_id'] = $value;
+            $this->setModified('page_id');
         }
 
-        $this->data['page_id'] = $value;
-        $this->setModified('page_id');
+        return $this;
     }
     
     /**
      * Set the value of Url / url
      * @param $value string
+     * @return MenuItem
      */
-    public function setUrl($value)
+    public function setUrl(?string $value) : MenuItem
     {
 
-
-
-        if ($this->data['url'] === $value) {
-            return;
+        if ($this->data['url'] !== $value) {
+            $this->data['url'] = $value;
+            $this->setModified('url');
         }
 
-        $this->data['url'] = $value;
-        $this->setModified('url');
+        return $this;
     }
     
     /**
      * Set the value of Position / position
      * @param $value int
+     * @return MenuItem
      */
-    public function setPosition(int $value)
+    public function setPosition(int $value) : MenuItem
     {
 
-        $this->validateNotNull('Position', $value);
-
-        if ($this->data['position'] === $value) {
-            return;
+        if ($this->data['position'] !== $value) {
+            $this->data['position'] = $value;
+            $this->setModified('position');
         }
 
-        $this->data['position'] = $value;
-        $this->setModified('position');
+        return $this;
     }
     
     
+    /**
+     * Get the Page model for this  by Id.
+     *
+     * @uses \Octo\Pages\Store\PageStore::getById()
+     * @uses \Octo\Pages\Model\Page
+     * @return \Octo\Pages\Model\Page
+     */
+    public function getPage()
+    {
+        $key = $this->getPageId();
+
+        if (empty($key)) {
+           return null;
+        }
+
+        return Store::get('Page')->getById($key);
+    }
+
+    /**
+     * Set Page - Accepts an ID, an array representing a Page or a Page model.
+     * @throws \Exception
+     * @param $value mixed
+     */
+    public function setPage($value)
+    {
+        // Is this a scalar value representing the ID of this foreign key?
+        if (is_scalar($value)) {
+            return $this->setPageId($value);
+        }
+
+        // Is this an instance of Page?
+        if (is_object($value) && $value instanceof \Octo\Pages\Model\Page) {
+            return $this->setPageObject($value);
+        }
+
+        // Is this an array representing a Page item?
+        if (is_array($value) && !empty($value['id'])) {
+            return $this->setPageId($value['id']);
+        }
+
+        // None of the above? That's a problem!
+        throw new \Exception('Invalid value for Page.');
+    }
+
+    /**
+     * Set Page - Accepts a Page model.
+     *
+     * @param $value \Octo\Pages\Model\Page
+     */
+    public function setPageObject(\Octo\Pages\Model\Page $value)
+    {
+        return $this->setPageId($value->getId());
+    }
+
     /**
      * Get the Menu model for this  by Id.
      *
@@ -298,57 +349,4 @@ class MenuItemBase extends Model
         return $this->setMenuId($value->getId());
     }
 
-    /**
-     * Get the Page model for this  by Id.
-     *
-     * @uses \Octo\Pages\Store\PageStore::getById()
-     * @uses \Octo\Pages\Model\Page
-     * @return \Octo\Pages\Model\Page
-     */
-    public function getPage()
-    {
-        $key = $this->getPageId();
-
-        if (empty($key)) {
-           return null;
-        }
-
-        return Store::get('Page')->getById($key);
-    }
-
-    /**
-     * Set Page - Accepts an ID, an array representing a Page or a Page model.
-     * @throws \Exception
-     * @param $value mixed
-     */
-    public function setPage($value)
-    {
-        // Is this a scalar value representing the ID of this foreign key?
-        if (is_scalar($value)) {
-            return $this->setPageId($value);
-        }
-
-        // Is this an instance of Page?
-        if (is_object($value) && $value instanceof \Octo\Pages\Model\Page) {
-            return $this->setPageObject($value);
-        }
-
-        // Is this an array representing a Page item?
-        if (is_array($value) && !empty($value['id'])) {
-            return $this->setPageId($value['id']);
-        }
-
-        // None of the above? That's a problem!
-        throw new \Exception('Invalid value for Page.');
-    }
-
-    /**
-     * Set Page - Accepts a Page model.
-     *
-     * @param $value \Octo\Pages\Model\Page
-     */
-    public function setPageObject(\Octo\Pages\Model\Page $value)
-    {
-        return $this->setPageId($value->getId());
-    }
 }

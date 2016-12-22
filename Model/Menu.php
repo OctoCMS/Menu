@@ -12,4 +12,4 @@ use Octo;
  */
 class Menu extends Base\MenuBase
 {
-	}
+}

@@ -6,13 +6,16 @@
 
 namespace Octo\Menu\Model\Base;
 
+use DateTime;
+use Block8\Database\Query;
 use Octo\Model;
 use Octo\Store;
+use Octo\Menu\Model\Menu;
 
 /**
  * Menu Base Model
  */
-class MenuBase extends Model
+abstract class MenuBase extends Model
 {
     protected function init()
     {
@@ -43,7 +46,7 @@ class MenuBase extends Model
      * @return int
      */
 
-     public function getId()
+     public function getId() : int
      {
         $rtn = $this->data['id'];
 
@@ -55,7 +58,7 @@ class MenuBase extends Model
      * @return string
      */
 
-     public function getName()
+     public function getName() : string
      {
         $rtn = $this->data['name'];
 
@@ -67,7 +70,7 @@ class MenuBase extends Model
      * @return string
      */
 
-     public function getTemplateTag()
+     public function getTemplateTag() : string
      {
         $rtn = $this->data['template_tag'];
 
@@ -78,56 +81,54 @@ class MenuBase extends Model
     /**
      * Set the value of Id / id
      * @param $value int
+     * @return Menu
      */
-    public function setId(int $value)
+    public function setId(int $value) : Menu
     {
 
-        $this->validateNotNull('Id', $value);
-
-        if ($this->data['id'] === $value) {
-            return;
+        if ($this->data['id'] !== $value) {
+            $this->data['id'] = $value;
+            $this->setModified('id');
         }
 
-        $this->data['id'] = $value;
-        $this->setModified('id');
+        return $this;
     }
     
     /**
      * Set the value of Name / name
      * @param $value string
+     * @return Menu
      */
-    public function setName(string $value)
+    public function setName(string $value) : Menu
     {
 
-        $this->validateNotNull('Name', $value);
-
-        if ($this->data['name'] === $value) {
-            return;
+        if ($this->data['name'] !== $value) {
+            $this->data['name'] = $value;
+            $this->setModified('name');
         }
 
-        $this->data['name'] = $value;
-        $this->setModified('name');
+        return $this;
     }
     
     /**
      * Set the value of TemplateTag / template_tag
      * @param $value string
+     * @return Menu
      */
-    public function setTemplateTag(string $value)
+    public function setTemplateTag(string $value) : Menu
     {
 
-        $this->validateNotNull('TemplateTag', $value);
-
-        if ($this->data['template_tag'] === $value) {
-            return;
+        if ($this->data['template_tag'] !== $value) {
+            $this->data['template_tag'] = $value;
+            $this->setModified('template_tag');
         }
 
-        $this->data['template_tag'] = $value;
-        $this->setModified('template_tag');
+        return $this;
     }
     
     
-    public function MenuItems()
+
+    public function MenuItems() : Query
     {
         return Store::get('MenuItem')->where('menu_id', $this->data['id']);
     }

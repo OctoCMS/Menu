@@ -28,9 +28,10 @@ class MenuItem extends Base\MenuItemBase
      * @return string
      * @author James Inman
      */
-    public function getUrl()
+    public function getUrl() : ?string
     {
         $page = $this->getPage();
+
         if (isset($page)) {
             return $page->getUri();
         } else {

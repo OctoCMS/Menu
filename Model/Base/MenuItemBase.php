@@ -11,54 +11,87 @@ use Block8\Database\Query;
 use Octo\Model;
 use Octo\Store;
 use Octo\Menu\Model\MenuItem;
+use Octo\Menu\Store\MenuItemStore;
 
 /**
  * MenuItem Base Model
  */
 abstract class MenuItemBase extends Model
 {
-    protected function init()
-    {
-        $this->table = 'menu_item';
-        $this->model = 'MenuItem';
+    protected $table = 'menu_item';
+    protected $model = 'MenuItem';
+    protected $data = [
+        'id' => null,
+        'menu_id' => null,
+        'title' => null,
+        'page_id' => null,
+        'url' => null,
+        'position' => 0,
+    ];
 
-        // Columns:
-        
-        $this->data['id'] = null;
-        $this->getters['id'] = 'getId';
-        $this->setters['id'] = 'setId';
-        
-        $this->data['menu_id'] = null;
-        $this->getters['menu_id'] = 'getMenuId';
-        $this->setters['menu_id'] = 'setMenuId';
-        
-        $this->data['title'] = null;
-        $this->getters['title'] = 'getTitle';
-        $this->setters['title'] = 'setTitle';
-        
-        $this->data['page_id'] = null;
-        $this->getters['page_id'] = 'getPageId';
-        $this->setters['page_id'] = 'setPageId';
-        
-        $this->data['url'] = null;
-        $this->getters['url'] = 'getUrl';
-        $this->setters['url'] = 'setUrl';
-        
-        $this->data['position'] = null;
-        $this->getters['position'] = 'getPosition';
-        $this->setters['position'] = 'setPosition';
-        
-        // Foreign keys:
-        
-        $this->getters['Page'] = 'getPage';
-        $this->setters['Page'] = 'setPage';
-        
-        $this->getters['Menu'] = 'getMenu';
-        $this->setters['Menu'] = 'setMenu';
-        
+    protected $getters = [
+        'id' => 'getId',
+        'menu_id' => 'getMenuId',
+        'title' => 'getTitle',
+        'page_id' => 'getPageId',
+        'url' => 'getUrl',
+        'position' => 'getPosition',
+        'Page' => 'getPage',
+        'Menu' => 'getMenu',
+    ];
+
+    protected $setters = [
+        'id' => 'setId',
+        'menu_id' => 'setMenuId',
+        'title' => 'setTitle',
+        'page_id' => 'setPageId',
+        'url' => 'setUrl',
+        'position' => 'setPosition',
+        'Page' => 'setPage',
+        'Menu' => 'setMenu',
+    ];
+
+    /**
+     * Return the database store for this model.
+     * @return MenuItemStore
+     */
+    public static function Store() : MenuItemStore
+    {
+        return MenuItemStore::load();
     }
 
-    
+    /**
+     * Get MenuItem by primary key: id
+     * @param int $id
+     * @return MenuItem|null
+     */
+    public static function get(int $id) : ?MenuItem
+    {
+        return self::Store()->getById($id);
+    }
+
+    /**
+     * @throws \Exception
+     * @return MenuItem
+     */
+    public function save() : MenuItem
+    {
+        $rtn = self::Store()->save($this);
+
+        if (empty($rtn)) {
+            throw new \Exception('Failed to save MenuItem');
+        }
+
+        if (!($rtn instanceof MenuItem)) {
+            throw new \Exception('Unexpected ' . get_class($rtn) . ' received from save.');
+        }
+
+        $this->data = $rtn->toArray();
+
+        return $this;
+    }
+
+
     /**
      * Get the value of Id / id
      * @return int

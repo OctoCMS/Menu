@@ -11,36 +11,74 @@ use Block8\Database\Query;
 use Octo\Model;
 use Octo\Store;
 use Octo\Menu\Model\Menu;
+use Octo\Menu\Store\MenuStore;
 
 /**
  * Menu Base Model
  */
 abstract class MenuBase extends Model
 {
-    protected function init()
-    {
-        $this->table = 'menu';
-        $this->model = 'Menu';
+    protected $table = 'menu';
+    protected $model = 'Menu';
+    protected $data = [
+        'id' => null,
+        'name' => null,
+        'template_tag' => null,
+    ];
 
-        // Columns:
-        
-        $this->data['id'] = null;
-        $this->getters['id'] = 'getId';
-        $this->setters['id'] = 'setId';
-        
-        $this->data['name'] = null;
-        $this->getters['name'] = 'getName';
-        $this->setters['name'] = 'setName';
-        
-        $this->data['template_tag'] = null;
-        $this->getters['template_tag'] = 'getTemplateTag';
-        $this->setters['template_tag'] = 'setTemplateTag';
-        
-        // Foreign keys:
-        
+    protected $getters = [
+        'id' => 'getId',
+        'name' => 'getName',
+        'template_tag' => 'getTemplateTag',
+    ];
+
+    protected $setters = [
+        'id' => 'setId',
+        'name' => 'setName',
+        'template_tag' => 'setTemplateTag',
+    ];
+
+    /**
+     * Return the database store for this model.
+     * @return MenuStore
+     */
+    public static function Store() : MenuStore
+    {
+        return MenuStore::load();
     }
 
-    
+    /**
+     * Get Menu by primary key: id
+     * @param int $id
+     * @return Menu|null
+     */
+    public static function get(int $id) : ?Menu
+    {
+        return self::Store()->getById($id);
+    }
+
+    /**
+     * @throws \Exception
+     * @return Menu
+     */
+    public function save() : Menu
+    {
+        $rtn = self::Store()->save($this);
+
+        if (empty($rtn)) {
+            throw new \Exception('Failed to save Menu');
+        }
+
+        if (!($rtn instanceof Menu)) {
+            throw new \Exception('Unexpected ' . get_class($rtn) . ' received from save.');
+        }
+
+        $this->data = $rtn->toArray();
+
+        return $this;
+    }
+
+
     /**
      * Get the value of Id / id
      * @return int

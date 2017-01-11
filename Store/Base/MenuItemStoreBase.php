@@ -7,18 +7,41 @@
 
 namespace Octo\Menu\Store\Base;
 
+use Block8\Database\Connection;
 use Octo\Store;
 use Octo\Menu\Model\MenuItem;
 use Octo\Menu\Model\MenuItemCollection;
+use Octo\Menu\Store\MenuItemStore;
 
 /**
  * MenuItem Base Store
  */
 class MenuItemStoreBase extends Store
 {
+    /** @var MenuItemStore $instance */
+    protected static $instance = null;
+
+    /** @var string */
     protected $table = 'menu_item';
+
+    /** @var string */
     protected $model = 'Octo\Menu\Model\MenuItem';
+
+    /** @var string */
     protected $key = 'id';
+
+    /**
+     * Return the database store for this model.
+     * @return MenuItemStore
+     */
+    public static function load() : MenuItemStore
+    {
+        if (is_null(self::$instance)) {
+            self::$instance = new MenuItemStore(Connection::get());
+        }
+
+        return self::$instance;
+    }
 
     /**
     * @param $value

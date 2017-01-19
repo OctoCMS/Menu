@@ -10,8 +10,9 @@ use DateTime;
 use Block8\Database\Query;
 use Octo\Model;
 use Octo\Store;
-use Octo\Menu\Model\Menu;
+
 use Octo\Menu\Store\MenuStore;
+use Octo\Menu\Model\Menu;
 
 /**
  * Menu Base Model
@@ -83,7 +84,6 @@ abstract class MenuBase extends Model
      * Get the value of Id / id
      * @return int
      */
-
      public function getId() : int
      {
         $rtn = $this->data['id'];
@@ -95,7 +95,6 @@ abstract class MenuBase extends Model
      * Get the value of Name / name
      * @return string
      */
-
      public function getName() : string
      {
         $rtn = $this->data['name'];
@@ -107,7 +106,6 @@ abstract class MenuBase extends Model
      * Get the value of TemplateTag / template_tag
      * @return string
      */
-
      public function getTemplateTag() : string
      {
         $rtn = $this->data['template_tag'];
@@ -164,10 +162,4 @@ abstract class MenuBase extends Model
         return $this;
     }
     
-    
-
-    public function MenuItems() : Query
-    {
-        return Store::get('MenuItem')->where('menu_id', $this->data['id']);
-    }
 }

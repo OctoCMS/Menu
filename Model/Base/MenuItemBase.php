@@ -10,8 +10,11 @@ use DateTime;
 use Block8\Database\Query;
 use Octo\Model;
 use Octo\Store;
-use Octo\Menu\Model\MenuItem;
+
 use Octo\Menu\Store\MenuItemStore;
+use Octo\Menu\Model\MenuItem;
+use Octo\Pages\Model\Page;
+use Octo\Menu\Model\Menu;
 
 /**
  * MenuItem Base Model
@@ -96,7 +99,6 @@ abstract class MenuItemBase extends Model
      * Get the value of Id / id
      * @return int
      */
-
      public function getId() : int
      {
         $rtn = $this->data['id'];
@@ -108,7 +110,6 @@ abstract class MenuItemBase extends Model
      * Get the value of MenuId / menu_id
      * @return int
      */
-
      public function getMenuId() : int
      {
         $rtn = $this->data['menu_id'];
@@ -120,7 +121,6 @@ abstract class MenuItemBase extends Model
      * Get the value of Title / title
      * @return string
      */
-
      public function getTitle() : ?string
      {
         $rtn = $this->data['title'];
@@ -132,7 +132,6 @@ abstract class MenuItemBase extends Model
      * Get the value of PageId / page_id
      * @return string
      */
-
      public function getPageId() : ?string
      {
         $rtn = $this->data['page_id'];
@@ -144,7 +143,6 @@ abstract class MenuItemBase extends Model
      * Get the value of Url / url
      * @return string
      */
-
      public function getUrl() : ?string
      {
         $rtn = $this->data['url'];
@@ -156,7 +154,6 @@ abstract class MenuItemBase extends Model
      * Get the value of Position / position
      * @return int
      */
-
      public function getPosition() : int
      {
         $rtn = $this->data['position'];
@@ -273,15 +270,15 @@ abstract class MenuItemBase extends Model
         return $this;
     }
     
-    
+
     /**
      * Get the Page model for this  by Id.
      *
      * @uses \Octo\Pages\Store\PageStore::getById()
-     * @uses \Octo\Pages\Model\Page
-     * @return \Octo\Pages\Model\Page
+     * @uses Page
+     * @return Page|null
      */
-    public function getPage()
+    public function getPage() : ?Page
     {
         $key = $this->getPageId();
 
@@ -289,15 +286,16 @@ abstract class MenuItemBase extends Model
            return null;
         }
 
-        return Store::get('Page')->getById($key);
+        return Page::Store()->getById($key);
     }
 
     /**
      * Set Page - Accepts an ID, an array representing a Page or a Page model.
      * @throws \Exception
      * @param $value mixed
+     * @return MenuItem
      */
-    public function setPage($value)
+    public function setPage($value) : MenuItem
     {
         // Is this a scalar value representing the ID of this foreign key?
         if (is_scalar($value)) {
@@ -305,7 +303,7 @@ abstract class MenuItemBase extends Model
         }
 
         // Is this an instance of Page?
-        if (is_object($value) && $value instanceof \Octo\Pages\Model\Page) {
+        if (is_object($value) && $value instanceof Page) {
             return $this->setPageObject($value);
         }
 
@@ -321,9 +319,10 @@ abstract class MenuItemBase extends Model
     /**
      * Set Page - Accepts a Page model.
      *
-     * @param $value \Octo\Pages\Model\Page
+     * @param $value Page
+     * @return MenuItem
      */
-    public function setPageObject(\Octo\Pages\Model\Page $value)
+    public function setPageObject(Page $value) : MenuItem
     {
         return $this->setPageId($value->getId());
     }
@@ -332,10 +331,10 @@ abstract class MenuItemBase extends Model
      * Get the Menu model for this  by Id.
      *
      * @uses \Octo\Menu\Store\MenuStore::getById()
-     * @uses \Octo\Menu\Model\Menu
-     * @return \Octo\Menu\Model\Menu
+     * @uses Menu
+     * @return Menu|null
      */
-    public function getMenu()
+    public function getMenu() : ?Menu
     {
         $key = $this->getMenuId();
 
@@ -343,15 +342,16 @@ abstract class MenuItemBase extends Model
            return null;
         }
 
-        return Store::get('Menu')->getById($key);
+        return Menu::Store()->getById($key);
     }
 
     /**
      * Set Menu - Accepts an ID, an array representing a Menu or a Menu model.
      * @throws \Exception
      * @param $value mixed
+     * @return MenuItem
      */
-    public function setMenu($value)
+    public function setMenu($value) : MenuItem
     {
         // Is this a scalar value representing the ID of this foreign key?
         if (is_scalar($value)) {
@@ -359,7 +359,7 @@ abstract class MenuItemBase extends Model
         }
 
         // Is this an instance of Menu?
-        if (is_object($value) && $value instanceof \Octo\Menu\Model\Menu) {
+        if (is_object($value) && $value instanceof Menu) {
             return $this->setMenuObject($value);
         }
 
@@ -375,11 +375,11 @@ abstract class MenuItemBase extends Model
     /**
      * Set Menu - Accepts a Menu model.
      *
-     * @param $value \Octo\Menu\Model\Menu
+     * @param $value Menu
+     * @return MenuItem
      */
-    public function setMenuObject(\Octo\Menu\Model\Menu $value)
+    public function setMenuObject(Menu $value) : MenuItem
     {
         return $this->setMenuId($value->getId());
     }
-
 }
